@@ -13,6 +13,13 @@
   </select>
   <br />
   <pulse-loader :loading="loading" :color="color" :size="size"></pulse-loader>
+
+  <table>
+    <tr v-for="turn in turns" :key="turn.id">
+      <th>{{turn.key}}</th>
+      <th>{{turn.worker_id}}</th>
+    </tr>
+  </table>
 </template>
 
 <script>
@@ -31,6 +38,7 @@ export default {
     services: [],
     workers: [],
     weeks: [],
+    turns: [],
     current_week: null,
     current_service: null,
   }),
@@ -59,10 +67,7 @@ export default {
       this.current_service = this.services[0].id
     },
     async getTurn(){
-      let turn_response = await turnRepository.getTurn(this.current_week, this.current_service)
-
-      console.log("turn_response")
-      console.log(turn_response)
+      this.turns = await turnRepository.getTurn(this.current_week, this.current_service)
     }
   }
 };
