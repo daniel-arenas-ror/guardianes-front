@@ -12,12 +12,11 @@
     <option v-for="week in weeks" :key="week" :value="week">{{week}}</option>
   </select>
   <br />
-  <pulse-loader :loading="loading" :color="color" :size="size"></pulse-loader>
 
-  <table>
-    <tr v-for="turn in turns" :key="turn.id">
-      <th>{{turn.key}}</th>
-      <th>{{turn.worker_id}}</th>
+  <table class="table-auto">
+    <tr v-for="turn in turns" :key="turn.id" >
+      <th :style="{ backgroundColor: bgColorHour(turn) }">{{turn.key}}</th>
+      <th :style="{ backgroundColor: bgColorWorker(turn) }" >{{ dataWorker(turn) }}</th>
     </tr>
   </table>
 </template>
@@ -46,8 +45,7 @@ export default {
     await this.initialize();
   },
   watch: {
-    current_week(nV, oV){
-      console.log("current_week")
+    current_week(_nV, _oV){
       this.getTurn()
     }
   },
@@ -68,7 +66,31 @@ export default {
     },
     async getTurn(){
       this.turns = await turnRepository.getTurn(this.current_week, this.current_service)
+    },
+    bgColorHour(turn){
+      if(turn.worker_id === null){
+        return "red"
+      }
+
+      return "green"
+    },
+    bgColorWorker(turn) {
+      if(turn.worker_id === null){
+        return
+      }
+
+      return this.workers.find(worker => worker.id === turn.worker_id).color
+    },
+    dataWorker(turn) {
+      if(turn.worker_id === null){
+        return "⚠️"
+      }
+
+      return this.workers.find(worker => worker.id === turn.worker_id).name
     }
+  },
+  computed: {
+
   }
 };
 </script>
