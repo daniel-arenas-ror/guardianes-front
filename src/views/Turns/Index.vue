@@ -1,11 +1,7 @@
 <template>
   <h1>Contrato {{this.deal?.serial}}</h1>
-  <select name="select">
-    <option v-for="service in services" :key="service.id" :value="service.id">{{service.name}}</option>
-  </select>
-  <br />
   <select name="select" v-model="current_service">
-    <option v-for="worker in workers" :key="worker.id" :value="worker.id">{{worker.name}}</option>
+    <option v-for="service in services" :key="service.id" :value="service.id">{{service.name}}</option>
   </select>
   <br />
   <select name="select" v-model="current_week">
@@ -16,9 +12,16 @@
   <a href="#/availability">editar disponibilidad</a>
 
   <table class="table-auto">
+    <tr v-for="value, index in turnsReport" :key="index" >
+      <th :style="{ backgroundColor: bgColorWorker(index) }" >{{ dataWorker(index) }}</th>
+      <th>{{ value }}</th>
+    </tr>  
+  </table>
+
+  <table class="table-auto">
     <tr v-for="turn in turns" :key="turn.id" >
       <th :style="{ backgroundColor: bgColorHour(turn) }">{{turn.key}}</th>
-      <th :style="{ backgroundColor: bgColorWorker(turn) }" >{{ dataWorker(turn) }}</th>
+      <th :style="{ backgroundColor: bgColorWorker(turn.worker_id) }" >{{ dataWorker(turn.worker_id) }}</th>
     </tr>
   </table>
 </template>
@@ -40,6 +43,7 @@ export default {
     workers: [],
     weeks: [],
     turns: [],
+    turnsReport: [],
     current_week: null,
     current_service: null,
   }),
@@ -68,6 +72,7 @@ export default {
     },
     async getTurn(){
       this.turns = await turnRepository.getTurn(this.current_week, this.current_service)
+      this.turnsReport = await turnRepository.getReport(this.current_week, this.current_service)
     },
     bgColorHour(turn){
       if(turn.worker_id === null){
@@ -76,23 +81,20 @@ export default {
 
       return "green"
     },
-    bgColorWorker(turn) {
-      if(turn.worker_id === null){
+    bgColorWorker(workerId) {
+      if(workerId === null || workerId === ""){
         return
       }
 
-      return this.workers.find(worker => worker.id === turn.worker_id).color
+      return this.workers.find(worker => worker.id == workerId)?.color
     },
-    dataWorker(turn) {
-      if(turn.worker_id === null){
+    dataWorker(workerId) {
+      if(workerId === null){
         return "⚠️"
       }
 
-      return this.workers.find(worker => worker.id === turn.worker_id).name
+      return this.workers.find(worker => worker.id == workerId)?.name
     }
-  },
-  computed: {
-
   }
 };
 </script>

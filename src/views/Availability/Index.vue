@@ -16,12 +16,13 @@
   <table class="table-auto">
     <tr>
       <th>key</th>
-      <td
+      <th
         v-for="worker in workers"
         :key="worker.id"
+        :style="{ backgroundColor: worker.color }"
       >
         {{worker.name}}
-      </td>
+      </th>
     </tr>
     <tr v-for="turn in turns" :key="turn.id" >
       <td :style="{ backgroundColor: bgColorHour(turn) }">{{turn.key}}</td>
