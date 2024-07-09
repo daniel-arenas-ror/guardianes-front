@@ -1,40 +1,41 @@
-<template>
-  <h1>Contrato {{this.deal?.serial}}</h1>
-  <select name="select" v-model="current_service">
-    <option v-for="service in services" :key="service.id" :value="service.id">{{service.name}}</option>
-  </select>
-  <br />
-  <select name="select" v-model="current_week">
-    <option v-for="week in weeks" :key="week" :value="week">{{week}}</option>
-  </select>
-  <br />
+<template class="flex flex-col">
 
-  <a href="#/availability">editar disponibilidad</a>
+  <div class="flex flex-row justify-between">
+    <h1>Contrato {{this.deal?.serial}}</h1>
+    <a href="#/availability">editar disponibilidad</a>
+  </div>
 
-  <table class="table-auto">
-    <tr v-for="value, index in turnsReport" :key="index" >
-      <th :style="{ backgroundColor: bgColorWorker(index) }" >{{ dataWorker(index) }}</th>
-      <th>{{ value }}</th>
-    </tr>  
-  </table>
+  <div class="flex flex-row">
+    <p>Servicio</p>
+    <select name="select" v-model="current_service">
+      <option v-for="service in services" :key="service.id" :value="service.id">{{service.name}}</option>
+    </select>
+  </div>
 
-  <table class="table-auto">
-    <tr v-for="turn in turns" :key="turn.id" >
-      <th :style="{ backgroundColor: bgColorHour(turn) }">{{turn.key}}</th>
-      <th :style="{ backgroundColor: bgColorWorker(turn.worker_id) }" >{{ dataWorker(turn.worker_id) }}</th>
-    </tr>
-  </table>
+  <div class="flex flex-row">
+    <p>Semana</p>
+    <select name="select" v-model="current_week">
+      <option v-for="week in weeks" :key="week" :value="week">{{week}}</option>
+    </select>
+  </div>
+
+  <TurnReportTable :turnsReport="turnsReport" :workers="workers" />
+  <TurnTable :turns="turns" :workers="workers" />
 </template>
 
 <script>
 import dealRepository from './../../repositories/deal'
 import turnRepository from './../../repositories/turn'
 import PulseLoader from 'vue-spinner/src/PulseLoader.vue'
+import TurnTable from '../../components/TurnTable.vue'
+import TurnReportTable from '../../components/TurnReportTable.vue'
 
 export default {
   name: "Turn",
   components: {
-    PulseLoader
+    PulseLoader,
+    TurnTable,
+    TurnReportTable
   },
   data: () => ({
     dealId: 1, // allways get the deal with id 1
@@ -73,27 +74,6 @@ export default {
     async getTurn(){
       this.turns = await turnRepository.getTurn(this.current_week, this.current_service)
       this.turnsReport = await turnRepository.getReport(this.current_week, this.current_service)
-    },
-    bgColorHour(turn){
-      if(turn.worker_id === null){
-        return "red"
-      }
-
-      return "green"
-    },
-    bgColorWorker(workerId) {
-      if(workerId === null || workerId === ""){
-        return
-      }
-
-      return this.workers.find(worker => worker.id == workerId)?.color
-    },
-    dataWorker(workerId) {
-      if(workerId === null){
-        return "⚠️"
-      }
-
-      return this.workers.find(worker => worker.id == workerId)?.name
     }
   }
 };

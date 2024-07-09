@@ -1,7 +1,5 @@
 <template>
-  <div class="">
-    <p class="">
-      <router-view />
-    </p>
+  <div class="container mx-auto p-2">
+    <router-view />
   </div>
 </template>
