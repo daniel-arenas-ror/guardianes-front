@@ -13,6 +13,8 @@
   </select>
   <br />
 
+  <a href="#/availability">editar disponibilidad</a>
+
   <table class="table-auto">
     <tr v-for="turn in turns" :key="turn.id" >
       <th :style="{ backgroundColor: bgColorHour(turn) }">{{turn.key}}</th>
