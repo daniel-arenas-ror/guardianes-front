@@ -1,5 +1,23 @@
-# Vue 3 + TypeScript + Vite
+## Guardianes Informáticos
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+Este proyecto se conecta con el backend para poder adminsitrar la disponibilidad de cada uno de los trabajadores
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
+# Estructura
+
+tenemos dos vistas, las cuales estan en los archivos de [views](https://github.com/daniel-arenas-ror/guardianes-front/tree/main/src/views), que son los encargados de mostrar los turnos y administrar las disponibilidad.
+
+Para hacer los request se creo un modulos llamado [axiosConf](https://github.com/daniel-arenas-ror/guardianes-front/blob/main/src/core/axiosConf/index.js), es el encargado de toda la configuracion del axios, por otro lado, creamos un [connector](https://github.com/daniel-arenas-ror/guardianes-front/blob/main/src/core/connector/index.js), que es el encargado de hacer todos los request, de esta forma queda abstraida toda la logica de request en un solo lugar y de allí se crean [repositorios](https://github.com/daniel-arenas-ror/guardianes-front/tree/main/src/repositories) para cada uno de los modelos de tienen comunicación con el backend.
+
+# Requisitos
+
+Node v20.13.1
+
+# Instalación
+
+```
+npm install
+```
+
+```
+npm run dev
+```
