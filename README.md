@@ -18,6 +18,10 @@ Node v20.13.1
 npm install
 ```
 
+Se debe de copiar y renombre el contenido del archivo `.env.example` donde tiene la ruta de la url del Backend, instrucciones para el backend [aquí](https://github.com/daniel-arenas-ror/guardianes-back)
+
 ```
 npm run dev
 ```
+
+Es proyecto correra en la url `http://localhost:5173/`
