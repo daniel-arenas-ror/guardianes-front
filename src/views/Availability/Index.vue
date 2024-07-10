@@ -107,6 +107,8 @@ export default {
       })
     },
     async getTurn(){
+      this.isLoading = true
+
       await turnRepository.getTurn(this.current_week, this.current_service)
                     .then(response => {
                       this.turns = response 
