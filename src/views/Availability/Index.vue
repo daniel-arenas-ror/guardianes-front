@@ -1,45 +1,58 @@
 <template>
-  <h1>Contrato {{this.deal?.serial}}</h1>
-  <select name="select">
-    <option v-for="service in services" :key="service.id" :value="service.id">{{service.name}}</option>
-  </select>
-  <br />
-  <select name="select" v-model="current_service">
-    <option v-for="worker in workers" :key="worker.id" :value="worker.id">{{worker.name}}</option>
-  </select>
-  <br />
-  <select name="select" v-model="current_week">
-    <option v-for="week in weeks" :key="week" :value="week">{{week}}</option>
-  </select>
-  <br />
+  <div class="flex flex-col">
+    <div class="flex flex-row justify-between">
+      <h1>Contrato {{this.deal?.serial}}</h1>
+      <a class="border p-3 bg-amber-300" href="#/">Ver turnos</a>
+    </div>
 
-  <table class="table-auto">
-    <tr>
-      <th>key</th>
-      <th
-        v-for="worker in workers"
-        :key="worker.id"
-        :style="{ backgroundColor: worker.color }"
-      >
-        {{worker.name}}
-      </th>
-    </tr>
-    <tr v-for="turn in turns" :key="turn.id" >
-      <td :style="{ backgroundColor: bgColorHour(turn) }">{{turn.key}}</td>
-      <td v-for="worker in workers" :key="worker.id" >
-        <input
-          type="checkbox"
-          :id="`${turn.id}_${worker?.id}`"
-          :value="`${turn.id}_${worker?.id}`"
-          v-model="availabilitiesChecked"
-          @change="check($event)"
-        />
-      </td>
-    </tr>
-  </table>
+    <div class="flex flex-row">
+      <p>Servicio</p>
+      <select name="select" v-model="current_service">
+        <option v-for="service in services" :key="service.id" :value="service.id">{{service.name}}</option>
+      </select>
+    </div>
+
+    <div class="flex flex-row">
+      <p>Semana</p>
+      <select name="select" v-model="current_week">
+        <option v-for="week in weeks" :key="week" :value="week">{{week}}</option>
+      </select>
+    </div>
+
+    <div class="grid grid-cols-4 gap-4">
+      <table class="table-fixed m-5" v-for="group, key in turnGrouped" :key="key">
+        <caption class="caption-top bg-amber-300">
+          {{key}}
+        </caption>
+        <tr>
+          <th>Worker</th>
+          <th
+            v-for="worker in workers"
+            :key="worker.id"
+            :style="{ backgroundColor: worker.color }"
+          >
+            {{worker.name}}
+          </th>
+        </tr>
+        <tr v-for="turn in group" :key="turn.id">
+          <td class="border p-1" :style="{ backgroundColor: bgColorHour(turn) }" > {{turn.hour}} - {{turn.hour + 1}} </td>
+          <td v-for="worker in workers" :key="worker.id" >
+            <input
+              type="checkbox"
+              :id="`${turn.id}_${worker?.id}`"
+              :value="`${turn.id}_${worker?.id}`"
+              v-model="availabilitiesChecked"
+              @change="check($event)"
+            />
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
 </template>
 
 <script>
+import _ from 'lodash';
 import dealRepository from './../../repositories/deal'
 import turnRepository from './../../repositories/turn'
 import availabilityRepository from './../../repositories/availability'
@@ -102,12 +115,20 @@ export default {
 
         if(e.target.checked){
           availabilityRepository.newAvailability(turnId, workerId)
+            .then(response => {
+              this.getTurn()
+              this.getAvailability()
+            })
         } else {
           let availability = this.availabilities.find(availability => availability.turn_id == turnId && availability.worker_id == workerId);
           let availabilityId = availability?.id;
 
           if (availabilityId) {
             availabilityRepository.destroyAvailability(availabilityId)
+              .then(response => {
+                this.getTurn()
+                this.getAvailability()
+              })
           } else {
             console.warn('Availability not found for turnId:', turnId, 'and workerId:', workerId);
           }
@@ -137,7 +158,9 @@ export default {
     }
   },
   computed: {
-
+    turnGrouped(){
+      return _.groupBy(this.turns, turn => turn.turn_date);
+    }
   }
 };
 </script>

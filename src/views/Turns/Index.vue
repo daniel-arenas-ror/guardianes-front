@@ -1,26 +1,27 @@
-<template class="flex flex-col">
+<template>
+  <div class="flex flex-col">
+    <div class="flex flex-row justify-between">
+      <h1>Contrato {{this.deal?.serial}}</h1>
+      <a class="border p-3 bg-amber-300" href="#/availability">Editar disponibilidad</a>
+    </div>
 
-  <div class="flex flex-row justify-between">
-    <h1>Contrato {{this.deal?.serial}}</h1>
-    <a href="#/availability">editar disponibilidad</a>
+    <div class="flex flex-row">
+      <p>Servicio</p>
+      <select name="select" v-model="current_service">
+        <option v-for="service in services" :key="service.id" :value="service.id">{{service.name}}</option>
+      </select>
+    </div>
+
+    <div class="flex flex-row">
+      <p>Semana</p>
+      <select name="select" v-model="current_week">
+        <option v-for="week in weeks" :key="week" :value="week">{{week}}</option>
+      </select>
+    </div>
+
+    <TurnReportTable :turnsReport="turnsReport" :workers="workers" />
+    <TurnTable :turns="turns" :workers="workers" />
   </div>
-
-  <div class="flex flex-row">
-    <p>Servicio</p>
-    <select name="select" v-model="current_service">
-      <option v-for="service in services" :key="service.id" :value="service.id">{{service.name}}</option>
-    </select>
-  </div>
-
-  <div class="flex flex-row">
-    <p>Semana</p>
-    <select name="select" v-model="current_week">
-      <option v-for="week in weeks" :key="week" :value="week">{{week}}</option>
-    </select>
-  </div>
-
-  <TurnReportTable :turnsReport="turnsReport" :workers="workers" />
-  <TurnTable :turns="turns" :workers="workers" />
 </template>
 
 <script>
