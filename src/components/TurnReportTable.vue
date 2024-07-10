@@ -22,9 +22,7 @@
         if(workerId === null || workerId === ""){
           return
         }
-        
-        console.log("this.workers")
-        console.log(this.workers)
+
         return this.workers.find(worker => worker.id == workerId)?.color
       },
       dataWorker(workerId) {
