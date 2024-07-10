@@ -5,16 +5,16 @@
       <a class="border p-3 bg-amber-300" href="#/">Ver turnos</a>
     </div>
 
-    <div class="flex flex-row">
+    <div class="flex flex-row p-1">
       <p>Servicio</p>
-      <select name="select" v-model="current_service">
+      <select class="border p-1 mx-1" name="select" v-model="current_service">
         <option v-for="service in services" :key="service.id" :value="service.id">{{service.name}}</option>
       </select>
     </div>
 
-    <div class="flex flex-row">
+    <div class="flex flex-row p-1">
       <p>Semana</p>
-      <select name="select" v-model="current_week">
+      <select class="border p-1 mx-1" name="select" v-model="current_week">
         <option v-for="week in weeks" :key="week" :value="week">{{week}}</option>
       </select>
     </div>
@@ -64,7 +64,7 @@ export default {
     PulseLoader
   },
   data: () => ({
-    dealId: 1, // allways get the deal with id 1
+    dealId: 2, // allways get the deal with id 1
     deal: null,
     services: [],
     workers: [],
@@ -77,6 +77,7 @@ export default {
   }),
   async mounted(){
     await this.initialize();
+    this.getQueryParams()
   },
   watch: {
     current_week(_nV, _oV){
@@ -96,7 +97,7 @@ export default {
       this.workers  = dealResponse.data.attributes?.workers;
       this.weeks    = dealResponse.data.attributes?.weeks;
 
-      this.current_week    = this.weeks[0]
+      this.current_week    = this.current_week ?? this.weeks[0];
       this.current_service = this.services[0].id
     },
     async getTurn(){
@@ -155,6 +156,10 @@ export default {
       }
 
       return this.workers.find(worker => worker.id === turn.worker_id).name
+    },
+    getQueryParams(){
+      let queryParams = this.$route.query;
+      this.current_week = parseInt(queryParams.week_id)
     }
   },
   computed: {
