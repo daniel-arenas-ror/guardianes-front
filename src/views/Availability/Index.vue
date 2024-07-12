@@ -1,7 +1,7 @@
 <template>
   <div v-if="isLoading">
     <div class="h-screen flex items-center justify-center">
-      <grid-loader :loading="loading" :color="color" :size="size"></grid-loader>
+      <grid-loader :loading="loading"></grid-loader>
     </div>
   </div>
   <div class="flex flex-col" v-else>
@@ -47,6 +47,7 @@
               :id="`${turn.id}_${worker?.id}`"
               :value="`${turn.id}_${worker?.id}`"
               v-model="availabilitiesChecked"
+              :checked="true"
               @change="check($event)"
             />
           </td>
@@ -62,6 +63,7 @@ import dealRepository from './../../repositories/deal'
 import turnRepository from './../../repositories/turn'
 import availabilityRepository from './../../repositories/availability'
 import GridLoader from 'vue-spinner/src/GridLoader.vue'
+import { nextTick } from 'vue'
 
 export default {
   name: "Availability",
@@ -70,7 +72,7 @@ export default {
   },
   data: () => ({
     isLoading: true,
-    dealId: 1, // allways get the deal with id 1
+    dealId: 2, // allways get the deal with id 1
     deal: null,
     services: [],
     workers: [],
@@ -124,12 +126,13 @@ export default {
                     })
     },
     MarkAvailability(){
+      this.availabilitiesChecked = []
       this.availabilities.forEach((availability) => this.availabilitiesChecked.push(`${availability.turn_id}_${availability.worker_id}`))
     },
     check (e) {
       this.isLoading = true
 
-      this.$nextTick(() => {
+      nextTick(() => {
         let [turnId, workerId] = e.target.id.split("_");
 
         if(e.target.checked){
