@@ -72,7 +72,7 @@ export default {
   },
   data: () => ({
     isLoading: true,
-    dealId: 2, // allways get the deal with id 1
+    dealId: 1, // allways get the deal with id 1
     deal: null,
     services: [],
     workers: [],
